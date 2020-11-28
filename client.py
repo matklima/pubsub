@@ -11,9 +11,14 @@ TOPIC_NAME = "test topic"
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
 
-def send(msg):
-    payload = msg.encode(FORMAT)
+def send_id(id):
+    send_id_data = str(id).encode(FORMAT)
+    client.send(send_id_data)
 
+def send(msg):
+    send_id(0)
+
+    payload = msg.encode(FORMAT)
     #prepare message length to send
     msg_length = len(msg)
     send_length = str(msg_length).encode(FORMAT)
