@@ -85,7 +85,7 @@ def handle_client(conn, addr):
                 msg = conn.recv(topic_len).decode(FORMAT)
                 if msg in topic_list:
                     subscription_dict.setdefault(conn, []).remove(msg)
-                    print (f"Unsubscribed from: {msg}")
+                    print (f"Disconnectiong, all nodes connected to: {msg} will be unsubscribed!")
                 connected = False
 
         else:
