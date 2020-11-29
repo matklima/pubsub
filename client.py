@@ -7,10 +7,8 @@ FORMAT = "UTF-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
 SERVER = "127.0.1.1"
 ADDR = (SERVER, PORT)
-TOPIC_NAME = "test topic"
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 
 def send_id(id):
     send_id_data = str(id).encode(FORMAT)
@@ -19,6 +17,7 @@ def send_id(id):
 def check_response():
     connected = True
     while connected:
+        lock.acquire()
         topic_len = client.recv(HEADER).decode(FORMAT)
         if topic_len:
             topic_len = int(topic_len)
@@ -30,6 +29,7 @@ def check_response():
             print(f"[SERVER:] {msg} : {payload}")
             if (payload == DISCONNECT_MESSAGE):
                     connected = False
+        lock.release()
 
 
 def subscribe(topic_name):
@@ -43,7 +43,7 @@ def subscribe(topic_name):
     thread= threading.Thread(target=check_response)
     thread.start()
 
-def send(msg):
+def send(topic_name, msg):
     send_id(0)
 
     payload = msg.encode(FORMAT)
@@ -53,10 +53,10 @@ def send(msg):
     send_length += b' ' * (HEADER - len(send_length))
 
     #prepare topic length to send
-    topic_length = len(TOPIC_NAME)
+    topic_length = len(topic_name)
     send_t_length = str(topic_length).encode(FORMAT)
     send_t_length += b' ' * (HEADER - len(send_t_length))
-    send_topic_name = str(TOPIC_NAME).encode(FORMAT)
+    send_topic_name = str(topic_name).encode(FORMAT)
 
     client.send(send_t_length)
     client.send(send_topic_name)
@@ -85,9 +85,10 @@ def start():
             client.connect(ADDR)
             connected = True
         elif value == "publish":
+            topic_to_publish_to = input("Enter topic you want to publish to:")
             if connected == True:
                 message_to_publish = input("Enter message to publish: \n")
-                send(message_to_publish)
+                send(topic_to_publish_to, message_to_publish)
             else:
                 print("No connection active")
         elif value == "subscribe":
@@ -104,12 +105,14 @@ def start():
                 print("No connection active")
         elif value == "disconnect":
             if connected == True:
-                send(DISCONNECT_MESSAGE)
+                send(topic_name, DISCONNECT_MESSAGE)
                 have_job = False
             else:
                 print("No connection active")
         else:
             print("No option available")
+
+lock = threading.Lock()  
 start()
 # send("Hello World!")
 # input()
