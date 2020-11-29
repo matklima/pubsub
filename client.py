@@ -65,6 +65,14 @@ def send(msg):
     client.send(payload)
     print(f"[{client}] {send_topic_name} : {payload}")
 
+def unsubscribe(topic_name):
+    send_id(2)
+    payload = topic_name.encode(FORMAT)
+    msg_length = len(topic_name)
+    send_length = str(msg_length).encode(FORMAT)
+    send_length += b' ' * (HEADER - len(send_length))
+    client.send(send_length)
+    client.send(payload)
 
 def start():
     print ("What do you want to do? (possible options: connect, subscribe, publish, disconnect, unsubscribe, help")
@@ -85,6 +93,12 @@ def start():
             if connected == True:
                 topic_name = input("Enter topic name to subscribe to: \n")
                 subscribe(topic_name)
+            else:
+                print("No connection active")
+        elif value == "unsubscribe":
+            if connected == True:
+                topic_name = input("Enter topic name to subscribe to: \n")
+                unsubscribe(topic_name)
             else:
                 print("No connection active")
         else:
