@@ -40,4 +40,7 @@ def send(msg):
 send("Hello World!")
 input()
 send("Hello Mateo!")
+input()
+send("Hello another time!")
+input()
 send(DISCONNECT_MESSAGE)

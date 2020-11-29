@@ -10,8 +10,28 @@ server.bind(ADDR)
 FORMAT = "UTF-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
 
-subscription_dict = {}
+subscription_dict = dict()
 topic_list = set()
+
+def send(client, topic_name, payload):
+    payload = payload.encode(FORMAT)
+    #prepare message length to send
+    msg_length = len(payload)
+    send_length = str(msg_length).encode(FORMAT)
+    send_length += b' ' * (HEADER - len(send_length))
+
+    #prepare topic length to send
+    topic_length = len(topic_name)
+    send_t_length = str(topic_length).encode(FORMAT)
+    send_t_length += b' ' * (HEADER - len(send_t_length))
+    send_topic_name = str(topic_name).encode(FORMAT)
+
+    client.send(send_t_length)
+    client.send(send_topic_name)
+
+    client.send(send_length)
+    client.send(payload)
+
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
@@ -35,7 +55,9 @@ def handle_client(conn, addr):
                 if (payload == DISCONNECT_MESSAGE):
                     connected = False
                 print(f"[{addr}] {msg} : {payload}")
-                #conn.send("Msg recieved".encode(FORMAT))
+                for key, val in subscription_dict.items():
+                    if msg in val:
+                        send(key, msg, payload)
         elif identifier_id == 1:
             topic_len = conn.recv(HEADER).decode(FORMAT)
             if topic_len:
@@ -50,7 +72,7 @@ def handle_client(conn, addr):
 
         else:
             print ("wrong identifier")
-            conn.close()
+            connected = False
 
     conn.close()
 

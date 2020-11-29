@@ -1,4 +1,5 @@
 import socket
+import threading
 
 HEADER = 64
 PORT = 5050
@@ -22,7 +23,22 @@ def send(msg):
     send_length += b' ' * (HEADER - len(send_length))
     client.send(send_length)
     client.send(payload)
-    print(client.recv(2048).decode(FORMAT))
+
+
+def check_response():
+    connected = True
+    while connected:
+        topic_len = client.recv(HEADER).decode(FORMAT)
+        if topic_len:
+            topic_len = int(topic_len)
+            msg = client.recv(topic_len).decode(FORMAT)
+            payload_len = client.recv(HEADER).decode(FORMAT)
+            if payload_len:
+                payload_len = int(payload_len)
+                payload = client.recv(payload_len).decode(FORMAT)
+            print(f"[SERVER:] {msg} : {payload}")
+            if (payload == DISCONNECT_MESSAGE):
+                    connected = False
 
 def subscribe(topic_name):
     send_id(1)
@@ -32,7 +48,7 @@ def subscribe(topic_name):
     send_length += b' ' * (HEADER - len(send_length))
     client.send(send_length)
     client.send(payload)
-    print(client.recv(2048).decode(FORMAT))
-
+    thread= threading.Thread(target=check_response)
+    thread.start()
 
 subscribe(TOPIC_NAME)
