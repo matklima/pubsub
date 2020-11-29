@@ -77,7 +77,8 @@ def unsubscribe(topic_name):
 def start():
     print ("What do you want to do? (possible options: connect, subscribe, publish, disconnect, unsubscribe, help")
     connected = False
-    while True:
+    have_job = True
+    while have_job:
         value = input()
 
         if value == "connect":
@@ -99,6 +100,12 @@ def start():
             if connected == True:
                 topic_name = input("Enter topic name to subscribe to: \n")
                 unsubscribe(topic_name)
+            else:
+                print("No connection active")
+        elif value == "disconnect":
+            if connected == True:
+                send(DISCONNECT_MESSAGE)
+                have_job = False
             else:
                 print("No connection active")
         else:
