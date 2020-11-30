@@ -89,7 +89,7 @@ def handle_client(conn, addr):
                     if val in topic:
                         subscription_dict.setdefault(key, []).remove(val)
                         print (f"Disconnectiong, all nodes connected to: {val} will be unsubscribed!")
-                connected = False
+            connected = False
         else:
             print ("wrong identifier")
             connected = False
