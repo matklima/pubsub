@@ -2,11 +2,8 @@ import socket
 import threading
 
 HEADER = 64
-PORT = 5050
 FORMAT = "UTF-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
-SERVER = socket.gethostbyname(socket.getfqdn())
-ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -85,8 +82,12 @@ def start():
         value = input()
 
         if value == "connect":
-            client.connect(ADDR)
-            connected = True
+            address = input("Enter address:\n")
+            port = input("Enter port:\n")
+            if port.isdigit() and (len(address) > 0):
+                ADDR = (address, int(port))   
+                client.connect(ADDR)
+                connected = True
         elif value == "publish":
             topic_to_publish_to = input("Enter topic you want to publish to:")
             if connected == True:
@@ -102,7 +103,7 @@ def start():
                 print("No connection active")
         elif value == "unsubscribe":
             if connected == True:
-                topic_name = input("Enter topic name to subscribe to: \n")
+                topic_name = input("Enter topic name to unsubscribe to: \n")
                 unsubscribe(topic_name)
             else:
                 print("No connection active")
@@ -117,10 +118,3 @@ def start():
 
 lock = threading.Lock()  
 start()
-# send("Hello World!")
-# input()
-# send("Hello Mateo!")
-# input()
-# send("Hello another time!")
-# input()
-# send(DISCONNECT_MESSAGE)
