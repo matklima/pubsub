@@ -26,4 +26,3 @@ option `disconnect` will disconnect client from server.
 TODO:
 
 * improve error handling
-* after client disconnect find all his topics, remove client from dictionary, remove all his topics from subscribed clients subscription dictionary
