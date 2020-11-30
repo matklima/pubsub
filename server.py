@@ -85,6 +85,8 @@ def handle_client(conn, addr):
                 for key, topic in subscription_dict.items():
                     if val in topic:
                         subscription_dict.setdefault(key, []).remove(val)
+                        payload = f"You have been unsubscribed from {val}, due to client disconnect."
+                        send(key, val, payload)
                         print (f"Disconnectiong, all nodes connected to: {val} will be unsubscribed!")
                 topic_list.remove(val)
                 if subscription_dict.get(conn):
