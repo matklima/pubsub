@@ -1,5 +1,5 @@
 # pubsub
-Requiremenst:
+Requirements:
 
 python3
 
@@ -11,7 +11,7 @@ run client.py: `python3 client.py`
 
 after running client.py you will get prompt to input next action. Possible actions are: connect, subscribe, publish, disconnect, unsubscribe
 
-after inpuntting `connect` you will automatically be connected to server on port 5050 (this can be improved to use other server/port)
+after inputting `connect` you will automatically be connected to server on port 5050 (this can be improved to use other server/port)
 
 option `publish` will ask you to input topic name to publish to and after that message you want to publish.
 
