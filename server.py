@@ -5,7 +5,11 @@ HEADER = 64
 FORMAT = "UTF-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
 
+#data about client subscriptions
 subscription_dict = dict()
+#data about client publised topics
+client_data_dict = dict()
+#data about all existing topics
 topic_list = set()
 
 def send(client, topic_name, payload):
@@ -31,9 +35,15 @@ def send(client, topic_name, payload):
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
     d = {conn : ['0']}
+    client_topics = set()
+    client_data = {conn : client_topics}
     subscription_dict.update(d)
+    client_data_dict.update(client_data)
     connected = True
     while connected:
+        for keys,values in client_data_dict.items():
+            print(keys)
+            print(values)
         identifier = conn.recv(1).decode(FORMAT)
         identifier_id = int(identifier)
         if identifier_id == 0:
@@ -41,6 +51,7 @@ def handle_client(conn, addr):
             if topic_len:
                 topic_len = int(topic_len)
                 msg = conn.recv(topic_len).decode(FORMAT)
+                client_data_dict.setdefault(conn, []).add(msg)
                 topic_list.add(str(msg))
                 payload_len = conn.recv(HEADER).decode(FORMAT)
                 if payload_len:
@@ -73,15 +84,12 @@ def handle_client(conn, addr):
                 else:
                     print ("No such topic")
         elif identifier_id == 3:
-            # topic_len = conn.recv(HEADER).decode(FORMAT)
-            # if topic_len:
-            #     topic_len = int(topic_len)
-            #     msg = conn.recv(topic_len).decode(FORMAT)
-            #     if msg in topic_list:
-            #         subscription_dict.setdefault(conn, []).remove(msg)
-            #         print (f"Disconnectiong, all nodes connected to: {msg} will be unsubscribed!")
+            for val in client_data_dict.get(conn):
+                for key, topic in subscription_dict.items():
+                    if val in topic:
+                        subscription_dict.setdefault(key, []).remove(val)
+                        print (f"Disconnectiong, all nodes connected to: {val} will be unsubscribed!")
                 connected = False
-
         else:
             print ("wrong identifier")
             connected = False

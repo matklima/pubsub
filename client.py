@@ -75,19 +75,24 @@ def disconnect():
     send_id(3)
 
 def start():
-    print ("What do you want to do? (possible options: connect, subscribe, publish, disconnect, unsubscribe, help")
+    print ("What do you want to do? (possible options: connect, subscribe, publish, disconnect, unsubscribe")
     connected = False
     have_job = True
     while have_job:
         value = input()
 
         if value == "connect":
-            address = input("Enter address:\n")
-            port = input("Enter port:\n")
-            if port.isdigit() and (len(address) > 0):
-                ADDR = (address, int(port))   
-                client.connect(ADDR)
-                connected = True
+            if connected == False:
+                address = input("Enter address:\n")
+                port = input("Enter port:\n")
+                if port.isdigit() and (len(address) > 0):
+                    ADDR = (address, int(port))   
+                    client.connect(ADDR)
+                    connected = True
+                else:
+                    print("Something went wrong while trying to connect to port")
+            else:
+                print("You are already connected")
         elif value == "publish":
             topic_to_publish_to = input("Enter topic you want to publish to:")
             if connected == True:
