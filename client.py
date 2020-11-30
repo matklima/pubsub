@@ -5,7 +5,7 @@ HEADER = 64
 PORT = 5050
 FORMAT = "UTF-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
-SERVER = "127.0.1.1"
+SERVER = socket.gethostbyname(socket.getfqdn())
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -74,6 +74,9 @@ def unsubscribe(topic_name):
     client.send(send_length)
     client.send(payload)
 
+def disconnect():
+    send_id(3)
+
 def start():
     print ("What do you want to do? (possible options: connect, subscribe, publish, disconnect, unsubscribe, help")
     connected = False
@@ -105,7 +108,7 @@ def start():
                 print("No connection active")
         elif value == "disconnect":
             if connected == True:
-                send(topic_name, DISCONNECT_MESSAGE)
+                disconnect()
                 have_job = False
             else:
                 print("No connection active")

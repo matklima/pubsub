@@ -3,7 +3,7 @@ import threading
 
 HEADER = 64
 PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = socket.gethostbyname(socket.getfqdn())
 ADDR = (SERVER, PORT)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
@@ -79,13 +79,13 @@ def handle_client(conn, addr):
                 else:
                     print ("No such topic")
         elif identifier_id == 3:
-            topic_len = conn.recv(HEADER).decode(FORMAT)
-            if topic_len:
-                topic_len = int(topic_len)
-                msg = conn.recv(topic_len).decode(FORMAT)
-                if msg in topic_list:
-                    subscription_dict.setdefault(conn, []).remove(msg)
-                    print (f"Disconnectiong, all nodes connected to: {msg} will be unsubscribed!")
+            # topic_len = conn.recv(HEADER).decode(FORMAT)
+            # if topic_len:
+            #     topic_len = int(topic_len)
+            #     msg = conn.recv(topic_len).decode(FORMAT)
+            #     if msg in topic_list:
+            #         subscription_dict.setdefault(conn, []).remove(msg)
+            #         print (f"Disconnectiong, all nodes connected to: {msg} will be unsubscribed!")
                 connected = False
 
         else:
