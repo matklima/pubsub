@@ -60,7 +60,6 @@ def send(topic_name, msg):
 
     client.send(send_length)
     client.send(payload)
-    print(f"[{client}] {send_topic_name} : {payload}")
 
 def unsubscribe(topic_name):
     send_id(2)

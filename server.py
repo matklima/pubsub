@@ -41,9 +41,6 @@ def handle_client(conn, addr):
     client_data_dict.update(client_data)
     connected = True
     while connected:
-        for keys,values in client_data_dict.items():
-            print(keys)
-            print(values)
         identifier = conn.recv(1).decode(FORMAT)
         identifier_id = int(identifier)
         if identifier_id == 0:
